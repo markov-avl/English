@@ -1,0 +1,44 @@
+TAILORING DESIGN FOR EMBEDDED COMPUTER VISION APPLICATIONS
+
+Computer vision algorithms have unique requirements that do not align smoothly with the efficiency and cost of embedded systems. On one hand, computer vision algorithms require huge amounts of computational power; on the other, there is no single universal computer vision pipeline. One stable set of algorithms that is suitable for all applications would enable the careful design of a single platform that could serve a wide range of computer vision systems. However, different applications use different algorithmic combinations, often with divergent parameters, so designers must conduct analyses to match application needs to the architectural platform.
+
+Over the past decade, our research has explored platform design requirements and processes for embedded computer vision systems in depth. As part of our work, we developed a methodology for design space exploration that allows designers to quickly evaluate hardware and software tradeoffs, determining both the overall computing volume needed and the computing units' specific characteristics.
+
+Our methodology focuses on two critical challenges in computer vision systems: numerical characteristics and memory. Each of these tasks is important independently, but they also interact because high-precision numerical representations require more memory and memory bandwidth. Our methodology combines numerical dynamic range analysis with computer architecture simulations to aid designers in algorithmic and architectural codesign and redesign, as well as provide insights that can guide them to a more informed platform choice.
+
+We used our methodology for several designs, including a smart camera-based surveillance system that monitors people in train stations. The ability to perform in-camera analysis is important for large-scale computer vision systems. Some multicamera systems send video to the cloud or a remote server for analysis, which consumes significant bandwidth. In-camera analysis systems can ensure that raw video never leaves the camera; the additional privacy created by the lack of a video record is attractive in many situations. However, building a distributed smart-camera system requires nodes with sufficient computational power to implement the required algorithms. The design space of multicamera computer vision systems is even larger, further motivating the need for customized computational platforms.
+
+With our methodology, multicamera system designers can quickly compare field-programmable gate array (FPGA) and CPU platforms as well as graphical processing units (GPUs), which makes hardware-software codesign more efficient. Such comparisons are becoming increasingly important in assessing system efficacy, particularly in GPU- based systems.
+
+CURRENT TOOL LIMITATIONS
+
+Our design methodology is aimed at the large semantic gap between the high level at which most computer vision algorithms are designed and the concerns that architects must address to build a viable embedded computer vision implementation. Manyalgorithm designers liberallyuse double-precision, floating-point arithmetic to avoid dealing with numerical problems, which incurs substantial memory and energy costs. They often use Matlab or the OpenCV library, which provide library functions for very abstract operations, obscuring implementation costs.
+
+Memory bandwidth and size, realtime performance, and energy and power consumption--key metrics for judging an embedded computing system's value-are not easily discernible from these abstract representations. Even if an embedded system specialist creates the final algorithm, computer vision algorithm designers should be actively involved in exploring design tradeoffs among accuracy, performance, and energy use.
+
+Computer vision algorithm designers are better equipped for this design space exploration because most current embedded systems tools do not have enough abstraction. Consequently, considerable effort is required to sufficiently translate the algorithm to evaluate design tradeoffs that can lead to high accuracy, low execution times, and efficient energy use. For example, the Xilinx System Generator and Jem- Vivado design suites,6 provide digital signal processing (DSP) blocks and high-level synthesis blocks, but these toolsrequire architecture and hardware design expertise. Work on DSP-oriented abstractions such as synchronous dataflow provides a higher-level programming abstraction, but tools for automatically mapping algorithmic tasks to heterogeneous architectures are still lacking. Such tools can greatly streamline the design process. For example, in previous work,' we developed methods for mapping memory-access patterns onto banked and ranked dynamic RAM (DRAM) structures as they were giventasks that generally involve manual work.
+
+Matlab Fixed Point Designer provides tools for analyzing numerical accuracy requirements but does not relate those characteristics to real time-oriented characteristics such as memory bandwidth. Architectures have been designed for particular operations, such as EFFEx for feature extraction, but these architectures provide only a single point in the design space.
+
+PLATFORM-NEUTRAL EXPLORATION
+
+Our methodology exploits platform-neutral tools that measure algorithmic characteristics, which can help identify the algorithm's key bottlenecks. Many designers of high-performance embedded systems first map the algorithm to a platform and then optimize it; our methodology emphasizes using platform-neutral measurements to guide platform selection.
+
+Algorithmic characteristics
+
+Analysis begins by implementing a prototype computer vision algorithm, which is to be mapped to an embedded system on a general-purpose PC. To determine the software implementation's complexity, we analyze its constituent tasks by splitting the system into relevant tasks with operations.
+
+We then measure the algorithm's resource requirements, including number of operations and memory bandwidth. Although back-of-the envelope analysis is adequate for simple algorithms, many computer vision algorithms have complex control flows that preclude manual analysis. We can obtain the required measurements without fully mapping to the target implementation, generating operation and memory-access counts on one architecture and then mapping those counts onto others. Measuring operation counts and memory access on code close to the algorithm designer enables very early design space exploration, which in turn allows algorithmic tailoring if necessary.
+
+Tools such as SimpleScalar or VTune are useful in exploring executable code. If the algorithm was designed in a language such as Cor C++, SimpleScalar or VTune can operate on the compiled code; for algorithms designed in Matlab, designers can generate code and then use these tools to analyze it.
+
+Hardware requirements
+
+Once designers have established the resource requirements, they must consider hardware needs: number of processors, special-purpose accelerators, and so on. Resource measurements give direct information on throughput and energy consumption, but not as much data on latency. This characteristic is better addressed through dataflow analysis, which is independent of metrics such as cache size and direct memory access (DMA).
+
+To facilitate platform choice, designers can perform additional simulations to measure throughput and energy consumption. In some cases, designers might need to refine the original task decomposition to better align with accelerator availability or to accommodate a particular function's implementation in hardware. For example, designers might opt to implement a kernel function in hardware but use software to control the kernel's execution.
+
+Many platforms allow some latitude in choosing numerical representation outside of data type specification (char, integer, or double). This is particularly true for FPGAs but also-to a lesser extent-for DSPs and microcontrollers. As a result, designers can change representation and do not need to rely solely on single or double precision.
+
+The design of numerical representations and accuracy analysis is widely recognized as a key part of DSP hardware and software design. Analyzing the application's permissible change in output accuracy with respect to savings in bandwidth and internal storage is a critical part of design space exploration. Clearly, the choice of representation has a direct impact on internal memory use and bandwidth. Furthermore, because computer vision algorithms, like any computationally intensive task, can require large amounts of internal storage, identifying memory requirements early on allows algorithmic tailoring that can save design effort at the later, more expensive implementation stages.
+

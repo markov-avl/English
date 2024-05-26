@@ -1,0 +1,52 @@
+1. Think about the science
+
+Too often, creators of visualization technologydo not spend enough (or indeed any) time endeavoring to understand the underlying science they are trying to represent, just as application scientists sometimes create crude visualizations without understanding the algorithms and science of visualization. To establish mutually beneficial peer relationships with application scientists and to create effective visual representations, visualization scientists need to spend more time understanding the underlying science, engineering, and medical applications. The benefits of working directly with application scientists are enormous, and yet all too often visualization scientists "hide" from end users. There is no substitute for working side-by-side with end users to create better techniques and tools for solving challenging scientific problems.
+
+2. Quantify effectiveness
+
+In 1993, during his keynote address at the IEEE Visualization 93 Conference, Fred Brooks said that "scientific visualization is not yet a discipline, although it is emerging as one. Too often we still have an ad hoc technique and rules of thumb." The majority of papers in visualization involve new techniques for characterizing scalar, vector, or tensor fields. However, the new techniques are rarely compared with previous techniques, and their effectiveness is seldom quantified by user studies. Fortunately, the importance of user studies in visualization research is now being recognized (see the excellent article by Robert Kosara and his colleagues for this magazine: "Thoughts on User Studies: Why, How, and When"). Unfortunately, it is also too rarely the case that the effectiveness of new methods is quantified within the scientific visualization literature. If we wish visualization to become a scientific enquiry, visualization scientists need to understand and use the scientific method, employing its steps:
+- Observation and description of a phenomenon or group of phenomena.
+- Formulation of a hypothesis to explain the phenomena.
+- Use of the hypothesis to predict the existence of other phenomena or to predict quantitatively the results of new observations.
+- Evaluation of the proposed methods and quantification of the effectiveness of their techniques.
+
+3. Represent error and uncertainty
+
+When was the last time you saw an isosurface with "error bars" or streamlines with "standard deviations" or volume visualizations with representations of confidence intervals? With few exceptions, visualization research has ignored the visualrepresentation oferrors and uncer- taintyfor 3D visualizations. However, if you look at highly peer-reviewed science and engineering journals, you will see that the majority of 2D graphs represent error or uncertainty within the experimental or simulated data.
+
+Why the difference? Clearly, if it is important to represent error and uncertainty in 2D, it is equally important to represent error and uncertainty in 2D and 3D visualizations. It is also often important to quantifyerror and uncertainty within new computer graphics techniques (see my previous Visualization Viewpoint article in the Sep/Oct 2003 issue of IEEE Computer Graphics and Applications for further discussion of this subject).
+
+4. Perceptual issues
+
+Research on the human visual system is vast, yet visualization researchers rarely study or apply what is known about the visual system when designing visualization techniques. The computer graphics and information visualization communities may be ahead in this regard, but there is still much to be gained by all groups in studying the biophysics and psychophysics of the visual system.
+
+5. Efficiently utilizing novel hardware architectures
+
+Hardware and systems software goes well beyond the ever-present pain of platform and compiler portability, device driver versions, and other mundane implementation issues. Modern visualization researchers have unprecedented graphics power available on inexpensive desktop workstations, but effectively utilizing that power can be a challenge. Visualization algorithms should strive for utmost efficiency for targeted platforms. Examples of algorithms that achieve such efficiency include RTRT, the Real Time Ray Tracer, which leverages the CPU, and algorithms that leverage graphics hardware (GPUs).
+
+Research into the most appropriate mapping between special-purpose hardware, such as GPUs, and general- purpose processors is an area that will see much advancement in the near future. How can we ensure the integrity of images when using low-cost graphics hardware that is often designed for games? How can we harness the ever-increasing power available on GPUs with relatively limited increases in CPU bus bandwidth? How can we creatively use new graphics hardware features for new visualization algorithms and efficiently utilize cost-effective clusters for interactive visualization?
+
+Lately there has been an explosion of papers and codes written on taking advantage of GPUs. In order to make GPUs more effective, we need to make them easier to program so that we can readily integrate them into visualization and graphics algorithms and tools.
+
+6. Human computer interaction
+
+Effective human-computer interaction was on Sutherland's 1966 list. HCI continues to be one of the top research and development goals for both visualization and computer graphics. I cannot begin to address the importance of effective interaction, much less details about how to achieve it in such a short article, especially given that HCI is a field unto itself. Astarting place might be Ben Shneiderman's visual-information-seeking mantra: "Overview first, zoom and filter, then details-on-demand." Two recent papers by Andries van Dam and his colleagues discuss the overall progress in interaction and provide comments on research challenges.
+
+7. Global/local visualization (details within context)
+
+Currently, most graphical techniques emphasize either a global or local perspective when visualizing vector or scalar field data, yet ideallyone wishes for simultaneous access to both perspectives. The global perspective is required for navigation and development of an overall gestalt, while a local perspective is required for detailed information extraction. Most visualization methods display either global variations, as is the case with line integral convolution and other dense vector field visualization methods, or local variations, as occurs in the use of streamlines.
+
+When one uses a global operation, such as drawing a vector at every cell, it is impossible to navigate due to the visual occlusion of the many vectors. However, local methods such as the vector rake, which avoid this occlusion bylimiting the sampling rate, fail to give an overall view of the underlying field. Furthermore, it is easy to miss interesting phenomena during such exploration. What we lack are a multitude of methods that convey details within an overall context.
+
+8. Integrated problem-solving environments (PSEs)
+
+Visualization is now most often seen as a postprocessing step in the scientific computing pipeline (geometric modeling -> simulation -> visualization). However, scientists now require more from visualization than a set of results and a tidy showcase in which to display them. The 1987 National Science Foundation Visualization in Scientific Computing workshop report poses the problem in these terms:
+
+Scientists not only want to analyze data that results from super-computations; they also want to interpret what is happening to the data during super-computations. Researchers want to steer calculations in close-to-real-time; they want to be able to change parameters, resolution or representation, and see the effects. They want to drive the scientific discovery process; they want to interact with their data.
+
+The most common mode ofvisualization today atnational supercomputer centers is batch. Batch processing defines a sequential process: compute, generate images and plots, and then record on paper, videotape or film.
+
+Interactive visual computing is a process whereby scientists communicating with data by manipulating its visual representation during processing. The more sophisticated process of navigation allows scientists to steer, or dynamically modify computations while they are occurring. These processes are invaluable tools for scientific discovery.
+
+Although these thoughts were reported more than 15 years ago, they express a very simple and still current idea: scientists want more interaction (see item 6 on the list) between modeling, simulation, and visualization than is currently made possible by most scientific computing codes. The scientific investigation process relies heavily on answers to a range of "what if" questions. Integrated PSEs that tightly couple interactive visualization techniques with geometric modeling and simulation techniques allow these questions to be answered more efficiently and effectively and thus help to guide the investigation as it occurs. Such PSEs can also provide computational steering and more interactive modes ofinvestigation. Integration also requires that we develop improved tools and techniques for managing visualizations. Similarly, while VTK, the Visualization Toolkit, is a great first step, integration requires further research in visualization software architecture.
+

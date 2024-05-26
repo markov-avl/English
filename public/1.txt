@@ -1,0 +1,68 @@
+I. INTRODUCTION
+
+Network packet processing architectures often use heterogeneous processors as accelerators to speed-up classic subtasks of this application domain. Our implementation compiles applications to bytecodes for a generalized packet processing virtual machine, then uses copies of a microcoded interpreter running in parallel to execute ordinary arithmetic and control flow instructions, while also triggering accelerator execution as needed (Figure 1).
+
+Making such a system programmable for customers requires not only support for compiling and deploying applications but also support for debugging and analyzing them. Presenting runtime exceptions, especially those that occur on accelerators (specialized coprocessors) in terms of user source code locations, can be challenging, since heterogeneous architectures can require multiple transformations to translate app code to various binaries. (We use Randall Hyde's definition of an exception as being "coerced rather than requested" - if the user threw the exception they would know where they did so). Therefore we map system-thrown exceptions back to user source code locations by:
+- Instrumenting the compiler and a lower-level bytecode tool to preserve transformation metadata
+- Reporting exceptions through the interpreter in terms of bytecode offsets
+- Creating a software tool to collate bytecode offsets with assembly and high-level language code locations
+
+This paper describes the progression of program transformations, reviews correlating forms for interactive debugging and then describes the kindred problem posed by accelerator exception reporting. We show a solution primarily based on collating all four program forms. Finally, we summarize related technologies and offer conclusions.
+
+II. TRANSFORMATIONS TO PROGRAM FORM: FROM HIGH-LEVEL SOURCE TO BINARIES
+
+As Figure 2 shows, our toolchain effects a series of transformations to an input program's form, as the process moves from analyzing high-level source code to interpreting optimized (packed) bytecodes in binary form. Those transformations are as follows
+- The compiler translates high-level packetC source code into an abstract kind of assembly code
+- A two-pass assembler transforms the assembly code into bytecodes that encode the assembly instructions into a set of packed fields
+- A linker combines the program's various object modules, merging their bytecodes into a single, linear sequence within an ELF (Executable and Linkable Format) file.
+- A bytecode optimizer tool packs specific bytecode sequences to yield a compact binary form.
+
+Despite some idiosyncrasies involving bytecodes, this transformation sequence is characteristic of a classic toolchain: we start with high-level language source code, pass through intermediary object code and end with executable (or interpretable) lower-level code.
+
+The text below and Figure 3 show how we map one program form to another. Individual instructions in a highlevel language can map to several assembly language instructions. Thus, given a set H, containing the h1 … hn highlevel language instructions of packetC and a set A, containing instructions a1 … an in our assembly language, we can define lists L1 … Ln where each is a list of elements in A. We define lists of elements from A, rather than sets, because an instruction in A might appear more than once in in a given list, Li.
+
+Thus, transforming a packetC program consists of translating each element of H, h, into a list Li, which contains one or more elements in A or is an empty list. An element, h, maps to an empty list if it has no corresponding sequence of assembly instructions (for example, it is a compiler directive).
+
+In the next step, assembly language instructions are translated into unpacked bytecodes. We maintain a one-to- one mapping between assembly language instructions and unpacked bytecodes. Thus, given the set of unpacked bytecodes, U, for every element a in A, there is one and only one element, ui, in U, such that a, is translated into (mapped to) u1.
+
+Finally, a program, represented as unpacked bytecodes (defined by set U's elements, u1 … un) is transformed into packed bytecodes (defined by elements p1 … pn of set, P).
+
+Each element, u, is mapped to a single corresponding element, p1, in P. Some unpacked bytecodes are represented using as few as three 32-bit words, although as many as eight words are used in some cases. The packed bytecodes pack instruction fields into words and bytes as tightly as possible, in order to speed interpreters at runtime by minimizing the amount of instruction memory they have to read.
+
+The next section presents a familiar problem that requires being able to map locations from one of these programs forms into locations in another form.
+
+III. HIGH FORMS TO LOW EXAMPLE: INTERACTIVE DEBUGGING
+
+We can preserve data about how mappings were done in the "forward' direction (from higher-level forms to lower) for any given transformation. This kind of data is relevant to building interactive debuggers for programs written in high-level languages.
+
+Recall that individual instructions in a high-level language (HLL) often map to a sequence of several assembly language instructions. An interactive debugger for an HLL must allow a user to declare a breakpoint (a place for interactive execution to halt) at a given HLL instruction or source code line (Figure 4). Similarly, a debugger step command should advance execution to a point just before the HLL instruction following the current one.
+
+As Figure 4 shows, if an HLL instruction, hi, corresponds to an assembly language sequence, a1 … a3, setting a breakpoint at h, requires performing the halt just before a1. A subsequent step should execute a1 through a3 and halt just before instruction a4.
+
+These requirements mandate being able to map "forward" from high-level source code locations and instructions to the instruction sequences of whatever lower-level form is to be executed or interpreted. Typically, a compiler correlates HLL instruction forms with the lower level instructions as it generates code sequences and preserves that information in a file or object module section.
+
+In the next section we will show that providing useful exception reporting poses challenges beyond those of interactive debugging, especially when multiple accelerators are present in a parallel architecture.
+
+IV. LOW PROGRAM FORMS TO HIGH: EXCEPTION REPORTING EXAMPLE
+
+Reporting runtime exceptions ordinarily involves working backward from low-level program forms to higher ones. In a parallel, heterogeneous architecture there are additional challenges, which include:
+- If many fine-grained threads are running in parallel, it may be difficult to associate the error with a particular context or faulty data item
+- The exception may occur on a specialized processor or accelerator that is essentially running its own internal program against user program data.
+- The exception is triggered by a low-level program form, far removed from the user source code form.
+
+These first two problems are mitigated by both our parallel software architecture and by the application domain.
+
+We use coarse-grained parallelism, in which a single thread processes a given packet in Single Program Multiple Data (SPMD) fashion. Therefore, the identity of the thread is constant throughout an iteration of the user program on a given packet. However, in this application domain, the identity of the failing thread (or context) is typically less important than the attributes of the current packet at the time of a failure. This information is readily available as explained below.
+
+We use copies of an interpreter running in parallel on microengines (Figure 1) with each interpreter acting somewhat like an orchestra conductor by invoking the services of specialized coprocessors (accelerators) as needed. An interpreter makes such a call to implement the semantics of an individual bytecode. Thus, no matter how complex a coprocessor's internal program is, the accelerator can report an exception to the calling interpreter (Figure 5), which can report the exception to users in terms of the current packet and the bytecode that required coprocessor service.
+
+Thus, the coarse-grained SPMD model avoids problems posed by using dissimilar, low-level threads and the nature of our bytecode ISA (which casts accelerator operations as complex, individual bytecodes) lets us map accelerator exceptions to a single runtime bytecode.
+
+This leaves us with the third problem and principal practical interest of the paper. How do we map from the runtime instruction in binary form all the way back to user source code, when we have undergone three or more program form transformations? We need to make three reverse mappings.
+
+- From the packed bytecode that triggered the exception, p in P to its unpacked bytecode parent, uj, in U
+- From the unpacked bytecode parent, uj, to its assembly language parent instruction, ak in A.
+- From assembly language instruction, ak to its parent packetC high-level language instruction, hm in H.
+
+To handle these reverse mappings we need components at various points in the tool-chain - and a new component to play appropriate roles. The next section describes our approach in terms of those components and their roles.
+
