@@ -23,7 +23,7 @@ The text below and Figure 3 show how we map one program form to another. Individ
 
 Thus, transforming a packetC program consists of translating each element of H, h, into a list Li, which contains one or more elements in A or is an empty list. An element, h, maps to an empty list if it has no corresponding sequence of assembly instructions (for example, it is a compiler directive).
 
-In the next step, assembly language instructions are translated into unpacked bytecodes. We maintain a one-to- one mapping between assembly language instructions and unpacked bytecodes. Thus, given the set of unpacked bytecodes, U, for every element a in A, there is one and only one element, ui, in U, such that a, is translated into (mapped to) u1.
+In the next step, assembly language instructions are translated into unpacked bytecodes. We maintain a one-to-one mapping between assembly language instructions and unpacked bytecodes. Thus, given the set of unpacked bytecodes, U, for every element a in A, there is one and only one element, ui, in U, such that a, is translated into (mapped to) u1.
 
 Finally, a program, represented as unpacked bytecodes (defined by set U's elements, u1 … un) is transformed into packed bytecodes (defined by elements p1 … pn of set, P).
 
@@ -64,5 +64,19 @@ This leaves us with the third problem and principal practical interest of the pa
 - From the unpacked bytecode parent, uj, to its assembly language parent instruction, ak in A.
 - From assembly language instruction, ak to its parent packetC high-level language instruction, hm in H.
 
-To handle these reverse mappings we need components at various points in the tool-chain - and a new component to play appropriate roles. The next section describes our approach in terms of those components and their roles.
+To handle these reverse mappings we need components at various points in the toolchain - and a new component to play appropriate roles. The next section describes our approach in terms of those components and their roles.
+
+
+- accelerators
+- implementation
+- coerced
+- to collate
+- correlating
+- to yield
+- intermediary
+- to maintain
+- halt
+- to mandate
+- dissimilar
+- to undergone
 

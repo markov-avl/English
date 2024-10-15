@@ -36,7 +36,7 @@ function App() {
 
             let elements = [
                 <span className="tooltip">{sentence}
-                    <span className="tooltiptext tooltip-top">{translatedSentences[i]}</span>
+                    {/*<span className="tooltiptext tooltip-top">{translatedSentences[i]}</span>*/}
                 </span>
             ]
 

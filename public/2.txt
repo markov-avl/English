@@ -25,7 +25,7 @@ Time-sharing can be useful, for example, in controlling the positioning of magne
 
 This idea was actually used with EDSAC I at the Cambridge University Mathematical Laboratory (Wilkes and Willis, 1956). Special routines were written to count the passage of blocks on the tape and to control its movement. One of these routines was included in every program which made use of the magnetic tape equipment. As every block passed the reading head, a special block marker caused a flip-flop inside the machine to be set. Each time this happened, control was transferred to the positioning routine. After this routine had taken account of the block, and performed any other necessary action, it returned control to the main program.
 
-In this case it was not necessary for the programmer to design his program so that it fitted into the gaps between the block counting operations. Instead, the machine proceeded at full speed, only switching to the positioning routine when necessary; in fact, it was not possible for the programmer to predict in advance the exact points at which his program would be interrupted by the positioning routine. The means adopted to bring this about were quite conventional. A conditional jump instruction was provided whose action depended on the setting of the fip-fop which recorded the passage of block markers. This instruction was used in such a way that the first time it was encountered after a block had passed, it caused control to be transferred to the positioning routine. The programmer was required to scatter copies of this instruction throughout his program in such a way that the interval of time between any two consecutive encounters with them would certainly be less than the time taken for one block to pass through the tape mechanism. This was, needless to say, a tiresome requirement. It did, however, enable fairly efficient use to be made of the computer while the tape was being positioned.
+In this case it was not necessary for the programmer to design his program so that it fitted into the gaps between the block counting operations. Instead, the machine proceeded at full speed, only switching to the positioning routine when necessary; in fact, it was not possible for the programmer to predict in advance the exact points at which his program would be interrupted by the positioning routine. The means adopted to bring this about were quite conventional. A conditional jump instruction was provided whose action depended on the setting of the flip-flop which recorded the passage of block markers. This instruction was used in such a way that the first time it was encountered after a block had passed, it caused control to be transferred to the positioning routine. The programmer was required to scatter copies of this instruction throughout his program in such a way that the interval of time between any two consecutive encounters with them would certainly be less than the time taken for one block to pass through the tape mechanism. This was, needless to say, a tiresome requirement. It did, however, enable fairly efficient use to be made of the computer while the tape was being positioned.
 
 AUTOMATIC INTERRUPTION
 
@@ -36,4 +36,19 @@ TX-2 will have special facilities for time-sharing between up to 33 branches of 
 For example, suppose that the calculation arrives at a point at which some results are ready to be recorded on magnetic tape. Then a branch of the program dealing with magnetic tape output is started up, and since this has high priority it immediately assumes control of the machine. It prepares the first piece of information and sends it to the magnetic tape, prepares the second, and then can do no more because the magnetic tape equipment is still occupied with the first piece of information. Control therefore lapses to the main program, which now embarks on another part of the calculation. As soon as the magnetic tape is ready to receive the second piece of information, the main program is interrupted and control is again transferred to the magnetic tape branch. Thus, so long as the magnetic tape is in operation, control of the machine will oscillate between the two branches of the program.
 
 In addition, while all this is going on, the machine may also be punching some information on paper tape. There will then be three branches of the program all requiring attention from time to time, and control may jump from one to another in a way indicated in Figure 3(a).
+
+
+- simultaneous
+- sufficient
+- adoption
+- provision
+- fascinating problems
+- to allocate
+- occasionally
+- to remain idle
+- to snatch
+- somewhat elaborate
+- to interrupt
+- flip-flop
+- to oscillate
 
